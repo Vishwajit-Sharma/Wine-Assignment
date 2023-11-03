@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import data from './Utils/WineData';
+import MeanCalculation from './Components/MeanCalculation';
 
 type AlcoholGroupProps = {
   [alcoholClass: string]: (string | number)[];
@@ -38,6 +39,11 @@ function App() {
     console.log(groupedData);
     
   }, [])
+
+  const calculateMean = (alcohalClass: number) => {
+    
+    return <MeanCalculation alcohalClass={alcohalClass} data = {alcohalData[alcohalClass]}/>
+  }
   
   return (
     <div className="App">
@@ -51,6 +57,12 @@ function App() {
                 {alcohalClassses.map(classes => <th>Class {`${classes}`}</th>)}
               </tr>
             </thead>
+            <tbody>
+              <tr>
+                <td>Flavanoids Mean</td>
+                {alcohalClassses.map(item => (<>{calculateMean(item)}</>))}
+              </tr>
+            </tbody>
           </table>
         </div>
 
