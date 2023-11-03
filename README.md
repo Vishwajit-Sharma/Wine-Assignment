@@ -1,6 +1,5 @@
-Here is the final rendered UI  - 
+# Here is the final rendered UI
 ![Final Screen](image.png)
-
 # Tech Stack used
 React functional components (alomg with useState & useEffect Hooks),
 TypeScript
