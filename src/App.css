@@ -4,4 +4,8 @@ table{
 }
 table, th, td {
   border:1px solid black;
+  text-align: center;
+}
+table tbody tr td:nth-child(1){
+  font-weight: bold;
 }
