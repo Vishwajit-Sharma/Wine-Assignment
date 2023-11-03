@@ -1,6 +1,10 @@
 Here is the final rendered UI  - 
 ![Final Screen](image.png)
 
+# Tech Stack used
+React functional components (alomg with useState & useEffect Hooks),
+TypeScript
+Vanilla JS (with ES-6 features)
 
 # Getting Started with Create React App
 
