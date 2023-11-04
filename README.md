@@ -1,5 +1,5 @@
 # Here is the final rendered UI
-![Final Screen](image.png)
+![Final Screen](table-data.png)
 # Tech Stack used
 React functional components (alomg with useState & useEffect Hooks),
 TypeScript

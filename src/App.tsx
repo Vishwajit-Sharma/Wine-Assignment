@@ -5,16 +5,15 @@ import MeanCalculation from './Components/MeanCalculation';
 import MedianCalculation from './Components/MedianCalculation';
 import ModeCalculation from './Components/ModeCalculation';
 
-type AlcoholGroupProps = {
+type GroupProps = {
   [alcoholClass: string]: (string | number)[];
 };
 
 function App() {
 
   const [alcohalClassses, setAlcohalClasses] = useState<number[]>([])
-  const [alcohalData, setAlcohalData] = useState<AlcoholGroupProps>({});
-  const [gammaValues, setGammaValues] = useState<(string | number)[]>([])
-
+  const [flavanoidData, setFlavanoidData] = useState<GroupProps>({});
+  const [gammaData, setGammaData] = useState<GroupProps>({});
 
   useEffect(()=>{
 
@@ -22,50 +21,63 @@ function App() {
     const uniqueAlcoholClasses: number[] = Array.from(new Set(data.map(item => item.Alcohol)));
     setAlcohalClasses(uniqueAlcoholClasses);
 
-    // Group together the Flavanoids value as per Alcohol classes
-    const groupedData: AlcoholGroupProps = {};
+    // Function to group together Flavanoids value as per Alcohol classes
+    groupFlavanoidData()
+
+    // Function to Add & group together Gamma property to the existing data
+    groupGammaData()
+
+  }, [])
+
+
+  const groupFlavanoidData = () => {
+    const groupedDataFlavanoid: GroupProps = {};
     data.forEach((item) => {
       const alcoholClass = item.Alcohol.toString();
       const flavanoidValue = item.Flavanoids.toString();
 
-      if (!groupedData[alcoholClass]) {
-        groupedData[alcoholClass] = [];
+      if (!groupedDataFlavanoid[alcoholClass]) {
+        groupedDataFlavanoid[alcoholClass] = [];
       }
-      groupedData[alcoholClass].push(flavanoidValue);
+      groupedDataFlavanoid[alcoholClass].push(flavanoidValue);
     });
+    setFlavanoidData(groupedDataFlavanoid);
+  }
 
-    setAlcohalData(groupedData);
-
-    // Function to Add Gamma property to the existing data
-    addGammaProperty()
-    
-  }, [])
-
-  const addGammaProperty = () => {
+  const groupGammaData = () => {
     const updatedData = data.map(item => {
       const ash = typeof item.Ash === "string" ? parseFloat(item.Ash) : item.Ash
       const gammaValue = (ash* item.Hue) / item.Magnesium
       return {...item, Gamma: gammaValue}
     })
 
-    // Create an array of all values of Gamma Property
-    const gammaValueArray = updatedData.map(item => item.Gamma.toFixed(3))
-    setGammaValues(gammaValueArray)
+   // Group together the Gamma value as per Alcohol classes
+        const groupedDataGamma: GroupProps = {};
+        updatedData.forEach((item) => {
+          const alcoholClass = item.Alcohol.toString();
+          const gammaValue = item.Gamma !== undefined ? item.Gamma.toString() : '';
+    
+          if (!groupedDataGamma[alcoholClass]) {
+            groupedDataGamma[alcoholClass] = [];
+          }
+          groupedDataGamma[alcoholClass].push(gammaValue);
+        });
+        setGammaData(groupedDataGamma);
   }
 
-  // Reder Component for Mean Calculation (For Gamma Calculation, not passing anything in the parameter)
-  const calculateMean = (alcohalClass?: number) => {   
-    return <MeanCalculation data = {alcohalClass ? alcohalData[alcohalClass] : gammaValues}/>
+  // Reder Component for Mean Calculation 
+  const calculateMean = (alcohalClass: number,  type : string) => {  
+    return <MeanCalculation data = {type ===  'flavanoid' ? flavanoidData[alcohalClass] : gammaData[alcohalClass]}/>
   }
 
-  // Reder Component for Median Calculation (For Gamma Calculation, not passing anything in the parameter)
-  const calculateMedian = (alcohalClass?: number) => {   
-    return <MedianCalculation data = {alcohalClass ? alcohalData[alcohalClass] : gammaValues}/>
+  // Reder Component for Median Calculation 
+  const calculateMedian =  (alcohalClass: number,  type : string) => {   
+    return <MedianCalculation data = {type ===  'flavanoid' ? flavanoidData[alcohalClass] : gammaData[alcohalClass]}/>
   }
 
-  // Reder Component for Meode Calculation (For Gamma Calculation, not passing anything in the parameter)
-  const calculateMode = (alcohalClass?: number) => {   
-    return <ModeCalculation data = {alcohalClass ? alcohalData[alcohalClass] : gammaValues}/>
+  // Reder Component for Mode Calculation 
+  const calculateMode =  (alcohalClass: number,  type : string) => {   
+    return <ModeCalculation data = {type ===  'flavanoid' ? flavanoidData[alcohalClass] : gammaData[alcohalClass]}/>
   }
   
   return (
@@ -82,15 +94,15 @@ function App() {
             <tbody>
               <tr>
                 <td>Flavanoids Mean</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMean(item)}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMean(item, 'flavanoid')}</React.Fragment>))}
               </tr>
               <tr>
                 <td>Flavanoids Median</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMedian(item)}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMedian(item, 'flavanoid')}</React.Fragment>))}
               </tr>
               <tr>
                 <td>Flavanoids Mode</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMode(item)}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMode(item, 'flavanoid')}</React.Fragment>))}
               </tr>
             </tbody>
           </table>
@@ -108,15 +120,15 @@ function App() {
             <tbody>
               <tr>
                 <td>Gamma Mean</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMean()}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMean(item, 'gamma')}</React.Fragment>))}
               </tr>
               <tr>
                 <td>Gamma Median</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMedian()}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMedian(item, 'gamma')}</React.Fragment>))}
               </tr>
               <tr>
                 <td>Gamma Mode</td>
-                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMode()}</React.Fragment>))}
+                {alcohalClassses.length &&  alcohalClassses.map((item, index) => (<React.Fragment key={index}>{calculateMode(item, 'gamma')}</React.Fragment>))}
               </tr>
             </tbody>
           </table>
